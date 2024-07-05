@@ -1,0 +1,154 @@
+{% extends './base.html' %}
+{% load static %}
+{% block body %}
+<!doctype html>
+<html lang="en">
+
+<body id="top">
+
+  <!-- HOME -->
+  <section class="section-hero overlay inner-page bg-image"
+    style="background-image: url('{% static 'images/hero_1.jpg' %}');" id="home-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-7">
+          <h1 class="text-white font-weight-bold">Apply Now</h1>
+          <div class="custom-breadcrumbs">
+            <a href="{% url 'app1:home' %}">Home</a> <span class="mx-2 slash">/</span>
+            <span class="text-white"><strong>Apply</strong></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="site-section" id="next-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-6 mb-5 mb-lg-0" style="margin-right: 100px;">
+          <form method="post" action="{% url 'app1:apply' pk=job.id %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% if messages %}
+            {% for message in messages %}
+              <div class="col-md-12 col-lg-12 col mx-auto">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                  {{ message }}
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              </div>
+              {% endfor %}
+            {% endif %}
+            <div class="row form-group">
+              <div class="col-md-6 mb-3 mb-md-0">
+                <label class="text-black" for="first_name">First Name</label>
+                <input type="text" id="first_name" class="form-control" name="first_name">
+              </div>
+              <div class="col-md-6">
+                <label class="text-black" for="last_name">Last Name</label>
+                <input type="text" id="last_name" class="form-control" name="last_name">
+              </div>
+            </div>
+
+            <div class="row form-group">
+
+              <div class="col-md-12">
+                <label class="text-black" for="email">Email</label>
+                <input type="email" id="email" class="form-control" name="email">
+              </div>
+            </div>
+
+            <div class="row form-group">
+              <div class="col-md-12">
+                <label for="company-website-tw d-block">Upload CV</label> <br>
+                <label class="btn btn-primary btn-md btn-file">
+                  Choose File<input type="file" hidden name="cv" id="cv">
+                </label>
+                <span id="cvFileNameDisplay" style="margin-left: 10px;"></span>
+              </div>
+            </div>            
+
+            <div class="row form-group">
+              <div class="col-md-12">
+                <label class="text-black" for="cover_letter">Cover Letter</label>
+                <textarea name="cover_letter" id="cover_letter" cols="30" rows="7" class="form-control"
+                  placeholder="Write your  Qualifications for this job" name="cover_letter" required oninput="validateDescription()"></textarea>
+                  <div style="display: flex; justify-content: space-between;"  >
+                    <span style="display: flex; justify-content: flex-start;">cover letter in range of 200-1024 characters long.</span>
+                    <span id="charCount" >Character Count: 0</span>
+                  </div>
+              </div>
+            </div>
+
+            <div class="row form-group">
+              <div class="col-md-12">
+                <input type="submit" value="Apply" class="btn btn-primary btn-md text-white">
+              </div>
+            </div>
+
+           
+            <script>
+              document.getElementById('cv').addEventListener('change', function() {
+                var fileName = this.files[0] ? this.files[0].name : 'No file selected';
+                document.getElementById('cvFileNameDisplay').textContent = fileName;
+              });
+              document.getElementById('cover_letter').addEventListener('input', function() {
+                var text = this.value;
+                var charCount = text.length;
+                document.getElementById('charCount').textContent = 'Character Count: ' + charCount;
+              });
+            </script>
+             <script>
+              function validateDescription() {
+                  const textarea = document.getElementById('cover_letter');
+                  const charCount = document.getElementById('charCount');
+                  const textLength = textarea.value.length;
+              
+                  charCount.textContent = 'Character Count: ' + textLength;
+              
+                  if (textLength < 200 || textLength > 1024) {
+                      charCount.style.color = 'red';
+                  } else {
+                      charCount.style.color = 'green';
+                  }
+              }
+              </script>
+
+          </form>
+        </div>
+        <div class="col-lg-4">
+          <div class="bg-light p-3 border rounded mb-4">
+            <h3 class="text-primary  mt-3 h5 pl-3 mb-3 ">Job Summary</h3>
+            <ul class="list-unstyled pl-3 mb-0">
+              <li class="mb-2"><strong class="text-black">Title: </strong> {{job.title}}</li>
+              <li class="mb-2"><strong class="text-black">Company name:</strong> {{job.company_name}}</li>
+              <li class="mb-2"><strong class="text-black">Published on:</strong> {{job.published_on}}</li>
+              <li class="mb-2"><strong class="text-black">Job type:</strong> {{job.type}}</li>
+              <li class="mb-2"><strong class="text-black">Job Location:</strong> {{job.location}}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+  </section>
+</body>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var descriptionField = document.getElementById('cover_letter');
+    var charCountDisplay = document.getElementById('charCount');
+    
+    function updateCharCount() {
+      var text = descriptionField.value;
+      var charCount = text.length;
+      charCountDisplay.textContent = 'Character Count: ' + charCount;
+    }
+    
+    // Initial count when the page loads
+    updateCharCount();
+    
+    // Update count on input
+    descriptionField.addEventListener('input', updateCharCount);
+  });
+</script>
+</html>
+{% endblock body %}

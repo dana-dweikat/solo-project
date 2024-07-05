@@ -1,0 +1,154 @@
+{% extends './base.html' %}
+{% load static %}
+{% block body %}
+<!doctype html>
+<html lang="en">
+<!-- HOME -->
+<section class="section-hero overlay inner-page bg-image"
+  style="background-image: url('{% static 'images/hero_1.jpg' %}');" id="home-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-7">
+        <h1 class="text-white font-weight-bold">Post A Job</h1>
+        <div class="custom-breadcrumbs">
+          <a href="{% url 'app1:home' %}">Home</a> <span class="mx-2 slash">/</span>
+          <a href="{% url 'app1:list_jobs' %}">Job</a> <span class="mx-2 slash">/</span>
+          <span class="text-white"><strong>Post a Job</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="site-section">
+  <div class="container">
+
+    <div class="row align-items-center mb-5">
+      <div class="col-lg-8 mb-4 mb-lg-0">
+        <div class="d-flex align-items-center">
+          <div>
+            <h2>Job Details</h2>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="row mb-5">
+      <div class="col-lg-12">
+        <form class="p-4 p-md-5 border rounded" method="post" action="{% url 'app1:post_edit_job' %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          {% if messages %}
+          {% for message in messages %}
+            <div class="col-md-12 col-lg-12 col mx-auto">
+              <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            </div>
+            {% endfor %}
+          {% endif %}
+          <h3 class="text-black mb-5 border-bottom pb-2">Job Information</h3>
+
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="text" class="form-control" id="email" placeholder="you@yourdomain.com" name="email" required>
+          </div>
+          <div class="form-group">
+            <label for="title">Job Title</label>
+            <input type="text" class="form-control" id="title" placeholder="Product Designer" name="title"required>
+          </div>
+          <div class="form-group">
+            <label for="location">Location</label>
+            <input type="text" class="form-control" id="location" placeholder="e.g. New York" name="location" required>
+          </div>
+
+          <div class="form-group">
+            <label for="type">Job Type</label>
+            <select class="selectpicker border rounded" id="type" data-style="btn-black" data-width="100%" 
+              name="type" data-live-search="true" title="Select Job Type" required>
+              <option value="part_time">Part Time</option>
+              <option value="full_time">Full Time</option>
+            </select>
+          </div>
+
+
+          <div class="form-group">
+            <label for="description" style="display: block;">Job Description</label>
+            <textarea name="description" id="description" style="width:100%; min-height: 200px;" required oninput="validateDescription()"></textarea>
+            <div style="display: flex; justify-content: space-between;"  >
+              <span style="display: flex; justify-content: flex-start;">Description  in range of 200-1024 characters long.</span>
+              <span id="charCount" >Character Count: 0</span>
+            </div>
+          </div>
+
+
+          <script>
+            function validateDescription() {
+                const textarea = document.getElementById('description');
+                const charCount = document.getElementById('charCount');
+                const textLength = textarea.value.length;
+            
+                charCount.textContent = 'Character Count: ' + textLength;
+            
+                if (textLength < 200 || textLength > 1024) {
+                    charCount.style.color = 'red';
+                } else {
+                    charCount.style.color = 'green';
+                }
+            }
+            </script>
+            
+    
+
+          <h3 class="text-black my-5 border-bottom pb-2">Company Information</h3>
+          <div class="form-group">
+            <label for="company_name">Company Name</label>
+            <input type="text" name="company_name" class="form-control" id="company_name" placeholder="e.g. abc  company" required>
+          </div>
+
+
+          <div class="form-group">
+            <label for="company_description" style="display: block;">Company Description (Optional)</label>
+            <textarea name="company_description" id="company_description" style="width:100%; min-height: 200px;"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="company-website-tw d-block">Upload Logo</label> <br>
+            <label class="btn btn-primary btn-md btn-file">
+              Choose Image<input type="file" hidden name="logo" id="logo">
+            </label>
+            <span id="fileNameDisplay" style="margin-left: 10px;"></span>
+          </div>
+          <button type="submit" class="btn btn-block btn-primary btn-md" style="height: 50px;">Submit</button>
+          <script>
+            document.getElementById('logo').addEventListener('change', function() {
+              var fileName = this.files[0] ? this.files[0].name : 'No file selected';
+              document.getElementById('fileNameDisplay').textContent = fileName;
+            });
+
+            document.getElementById('description').addEventListener('input', function() {
+              var text = this.value;
+              var charCount = text.length;
+              document.getElementById('charCount').textContent = 'Character Count: ' + charCount;
+            });
+
+          </script>
+          </form>
+          </div>
+    </div>
+</section>
+
+<script>
+  function copyEditorContent() {
+    var editorContent = document.getElementById('editor-2').innerHTML;
+    document.getElementById('job_description').value = editorContent;
+  }
+</script>
+
+</html>
+
+{% endblock body %}
